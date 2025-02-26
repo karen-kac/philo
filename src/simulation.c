@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:17:41 by myokono           #+#    #+#             */
-/*   Updated: 2025/02/26 17:48:29 by myokono          ###   ########.fr       */
+/*   Updated: 2025/02/26 18:12:04 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,19 +89,9 @@ void	*philo_routine(void *arg)
 
 bool	start_simulation(t_data *data)
 {
-	int	i;
-
 	data->start_time = get_current_time();
 	if (!create_threads(data))
 		return (false);
-	i = 0;
-	while (i < data->nb_philo)
-	{
-		pthread_mutex_lock(&data->meal_mutex);
-		data->philos[i].last_meal_time = 0;
-		pthread_mutex_unlock(&data->meal_mutex);
-		i++;
-	}
 	check_death(data, data->philos);
 	return (join_threads(data));
 }
