@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:09 by myokono           #+#    #+#             */
-/*   Updated: 2025/02/26 16:24:51 by myokono          ###   ########.fr       */
+/*   Updated: 2025/02/26 17:50:01 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,12 @@ void		clean_data(t_data *data);
 void		print_status(t_data *data, int id, char *status);
 
 /* simulation.c */
-bool		is_simulation_over(t_data *data);
 void		*philo_routine(void *arg);
 bool		start_simulation(t_data *data);
 bool		check_if_all_ate(t_data *data);
 
 /* death.c */
+bool		is_simulation_over(t_data *data);
 void		check_death(t_data *data, t_philo *philo);
 
 /* thread_management.c */

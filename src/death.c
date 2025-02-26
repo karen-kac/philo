@@ -6,11 +6,23 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 16:22:37 by myokono           #+#    #+#             */
-/*   Updated: 2025/02/26 16:23:48 by myokono          ###   ########.fr       */
+/*   Updated: 2025/02/26 17:50:07 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+bool	is_simulation_over(t_data *data)
+{
+	bool	result;
+
+	result = false;
+	pthread_mutex_lock(&data->death_mutex);
+	if (data->someone_died || data->all_ate)
+		result = true;
+	pthread_mutex_unlock(&data->death_mutex);
+	return (result);
+}
 
 void	check_death(t_data *data, t_philo *philo)
 {
