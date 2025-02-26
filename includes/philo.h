@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:09 by myokono           #+#    #+#             */
-/*   Updated: 2025/02/26 14:20:40 by myokono          ###   ########.fr       */
+/*   Updated: 2025/02/26 16:24:51 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,6 @@
 # include <pthread.h>
 # include <stdbool.h>
 # include <string.h>
-
-# define RED "\033[0;31m"
-# define GREEN "\033[0;32m"
-# define YELLOW "\033[0;33m"
-# define BLUE "\033[0;34m"
-# define RESET "\033[0m"
 
 typedef struct s_data	t_data;
 
@@ -66,9 +60,12 @@ void		print_status(t_data *data, int id, char *status);
 
 /* simulation.c */
 bool		is_simulation_over(t_data *data);
-void		check_death(t_data *data, t_philo *philo);
 void		*philo_routine(void *arg);
 bool		start_simulation(t_data *data);
+bool		check_if_all_ate(t_data *data);
+
+/* death.c */
+void		check_death(t_data *data, t_philo *philo);
 
 /* thread_management.c */
 bool		create_threads(t_data *data);

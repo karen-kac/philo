@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:28 by myokono           #+#    #+#             */
-/*   Updated: 2025/02/26 14:16:58 by myokono          ###   ########.fr       */
+/*   Updated: 2025/02/26 16:30:03 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,7 @@ static bool	check_args(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		printf("Usage: %s number_of_philosophers time_to_die ", argv[0]);
-		printf("time_to_eat time_to_sleep ");
-		printf("[number_of_times_each_philosopher_must_eat]\n");
+		printf("Invalid number of arguments.");
 		return (false);
 	}
 	i = 1;
