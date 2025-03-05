@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:17:12 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/05 21:03:34 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/05 23:33:19 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,20 @@ void	ft_usleep(long long time_in_ms)
 
 void	print_status(t_data *data, int id, char *status)
 {
-	bool	is_dead;
-
 	pthread_mutex_lock(&data->print_mutex);
 	pthread_mutex_lock(&data->death_mutex);
-	is_dead = data->someone_died;
-	pthread_mutex_unlock(&data->death_mutex);
-	if (!is_dead || strcmp(status, "died") == 0)
+	// pthread_mutex_lock(&data->meal_mutex);
+	if (data->someone_died == false && data->all_ate == false)
 	{
 		printf("%lld %d %s\n", get_time_since_start(data), id, status);
+		// pthread_mutex_unlock(&data->meal_mutex);
+		pthread_mutex_unlock(&data->death_mutex);
+		pthread_mutex_unlock(&data->print_mutex);
 	}
+	// pthread_mutex_unlock(&data->meal_mutex);
+	pthread_mutex_unlock(&data->death_mutex);
 	pthread_mutex_unlock(&data->print_mutex);
 }
-
 
 void	clean_data(t_data *data)
 {

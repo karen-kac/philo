@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:09 by myokono           #+#    #+#             */
-/*   Updated: 2025/02/26 17:50:01 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/05 23:32:40 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void		ft_usleep(long long time_in_ms);
 long long	get_time(void);
 void		clean_data(t_data *data);
 void		print_status(t_data *data, int id, char *status);
+
 
 /* simulation.c */
 void		*philo_routine(void *arg);
