@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 16:22:37 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/05 23:26:09 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/06 14:21:01 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ bool	is_simulation_over(t_data *data)
 {
 	bool	result;
 
-	// check_if_all_ate(data);
 	pthread_mutex_lock(&data->death_mutex);
 	result = (data->someone_died || data->all_ate);
 	pthread_mutex_unlock(&data->death_mutex);
@@ -41,7 +40,8 @@ void	check_death(t_data *data, t_philo *philo)
 				data->someone_died = true;
 				pthread_mutex_unlock(&data->death_mutex);
 				pthread_mutex_lock(&data->print_mutex);
-				printf("%lld %d died\n", get_time_since_start(data), philo[i].id);
+				printf("%lld %d died\n", \
+					get_time_since_start(data), philo[i].id);
 				pthread_mutex_unlock(&data->print_mutex);
 			}
 			pthread_mutex_unlock(&data->meal_mutex);

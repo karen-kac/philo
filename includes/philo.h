@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:09 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/05 23:32:40 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/06 15:07:47 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,10 @@ long long	get_time(void);
 void		clean_data(t_data *data);
 void		print_status(t_data *data, int id, char *status);
 
-
 /* simulation.c */
 void		*philo_routine(void *arg);
 bool		start_simulation(t_data *data);
-bool		check_if_all_ate(t_data *data);
+void		check_if_all_ate(t_data *data);
 
 /* death.c */
 bool		is_simulation_over(t_data *data);
@@ -79,5 +78,8 @@ long long	get_current_time(void);
 void		set_start_time(t_data *data);
 long long	time_diff(long long past, long long present);
 long long	get_time_since_start(t_data *data);
+
+/* eat.c */
+void		philo_eat(t_philo *philo);
 
 #endif
