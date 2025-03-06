@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:17:12 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/06 14:21:23 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/06 15:26:51 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	print_status(t_data *data, int id, char *status)
 		printf("%lld %d %s\n", get_time_since_start(data), id, status);
 		pthread_mutex_unlock(&data->death_mutex);
 		pthread_mutex_unlock(&data->print_mutex);
+		return ;
 	}
 	pthread_mutex_unlock(&data->death_mutex);
 	pthread_mutex_unlock(&data->print_mutex);
