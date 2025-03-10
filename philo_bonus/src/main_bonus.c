@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 10:00:00 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/10 22:15:06 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/10 22:30:33 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ static bool	init_philos(t_data *data)
 		data->philos[i].id = i + 1;
 		data->philos[i].data = data;
 		data->philos[i].shared = data->shared;
-		sprintf(data->philos[i].meal_sem_name, "/sem_meal_%d", i + 1);
 		sem_unlink(data->philos[i].meal_sem_name);
 		data->philos[i].meal_check_sem = sem_open(data->philos[i].meal_sem_name,
 				O_CREAT | O_EXCL, S_IRWXU, 1);
