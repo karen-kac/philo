@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 15:07:23 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/06 15:07:58 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/10 09:41:05 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,6 @@ static void	perform_eating(t_philo *philo, int first_fork, int second_fork)
 	pthread_mutex_lock(&data->meal_mutex);
 	print_status(data, philo->id, "has taken a fork");
 	pthread_mutex_unlock(&data->meal_mutex);
-	if (data->nb_philo == 1)
-	{
-		ft_usleep(data->time_to_die * 2);
-		pthread_mutex_unlock(&data->forks[first_fork]);
-		return ;
-	}
 	pthread_mutex_lock(&data->meal_mutex);
 	print_status(data, philo->id, "has taken a fork");
 	print_status(data, philo->id, "is eating");
@@ -77,9 +71,22 @@ static void	perform_eating(t_philo *philo, int first_fork, int second_fork)
 
 void	philo_eat(t_philo *philo)
 {
-	int	first_fork;
-	int	second_fork;
+	int		first_fork;
+	int		second_fork;
+	t_data	*data;
 
+	data = philo->data;
+	if (data->nb_philo == 1)
+	{
+		if (!lock_first_fork(philo, &first_fork))
+			return ;
+		pthread_mutex_lock(&data->meal_mutex);
+		print_status(data, philo->id, "has taken a fork");
+		pthread_mutex_unlock(&data->meal_mutex);
+		ft_usleep(philo->data->time_to_die * 2);
+		pthread_mutex_unlock(&data->forks[first_fork]);
+		return ;
+	}
 	if (!lock_first_fork(philo, &first_fork))
 		return ;
 	if (!lock_second_fork(philo, &second_fork, first_fork))
