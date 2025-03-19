@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: claude                                     +#+  +:+       +#+         #
+#    By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/03/19                              #+#    #+#              #
-#    Updated: 2025/03/19                             ###   ########.fr        #
+#    Created: 2025/03/19 20:43:14 by myokono           #+#    #+#              #
+#    Updated: 2025/03/19 21:05:32 by myokono          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,8 @@ NAME = philo_bonus
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 
-SRCS = src/main_bonus.c src/utils_bonus.c src/philosopher_bonus.c
+SRCS = src/main_bonus.c src/utils_bonus.c src/philosopher_bonus.c \
+		src/clean_bonus.c src/death_bonus.c src/init_bonus.c src/routine_bonus.c
 OBJS = $(SRCS:.c=.o)
 
 HEADERS = philo_bonus.h
