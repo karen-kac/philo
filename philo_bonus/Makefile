@@ -5,46 +5,34 @@
 #                                                     +:+ +:+         +:+      #
 #    By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/03/10 09:50:11 by myokono           #+#    #+#              #
-#    Updated: 2025/03/10 15:46:38 by myokono          ###   ########.fr        #
+#    Created: 2025/03/19 19:33:55 by myokono           #+#    #+#              #
+#    Updated: 2025/03/19 19:33:56 by myokono          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philo_bonus
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread
-RM = rm -f
+NAME		= philo_bonus
 
-SRCDIR = src/
-INCDIR = includes/
-SRCFILES = main_bonus.c \
-		utils_bonus.c \
-		simulation_bonus.c \
-		death_bonus.c \
-		process_management_bonus.c \
-		time_management_bonus.c \
-		eat_bonus.c \
-		monitor_meals_bonus.c
+CC			= gcc
+CFLAGS		= -Wall -Wextra -Werror
+RM			= rm -f
 
-SRCS = $(addprefix $(SRCDIR), $(SRCFILES))
-OBJS = $(SRCS:.c=.o)
-INCLUDES = -I$(INCDIR)
+SRCS		= src/main_bonus.c src/init_bonus.c src/philosopher_bonus.c src/utils_bonus.c src/meal_counter_bonus.c
+OBJS		= $(SRCS:.c=.o)
 
-all: $(NAME)
+all:		$(NAME)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+$(NAME):	$(OBJS)
+			$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 
 clean:
-	$(RM) $(OBJS)
+			$(RM) $(OBJS)
 
-fclean: clean
-	$(RM) $(NAME)
+fclean:		clean
+			$(RM) $(NAME)
 
-re: fclean all
+re:			fclean all
 
-.PHONY: all clean fclean re
+bonus:		all
+
+.PHONY:		all clean fclean re bonus
