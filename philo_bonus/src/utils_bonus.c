@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 20:43:28 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 20:58:51 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/19 21:12:45 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ void	safe_print(t_philo *philo, char *message)
 		sem_post(philo->shared->print_sem);
 }
 
-/* Parse command line arguments */
 int	parse_arguments(int argc, char **argv, t_shared *shared)
 {
 	if (argc < 5 || argc > 6)

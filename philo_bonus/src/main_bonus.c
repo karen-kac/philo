@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:34:21 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 20:58:01 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/19 21:12:59 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ static void	wait_for_philosophers(t_shared *shared)
 		kill_all_processes(shared);
 }
 
-/* Main function */
 int	main(int argc, char **argv)
 {
 	t_shared	shared;

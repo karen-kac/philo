@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:01:03 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 21:06:02 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/19 21:12:34 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static void	start_monitor_thread(t_philo *philo)
 	pthread_detach(monitor_thread);
 }
 
-/* 哲学者が1人だけの場合の特別処理を切り出し */
 static void	handle_single_philo(t_philo *philo)
 {
 	sem_wait(philo->shared->forks_sem);
