@@ -16,83 +16,83 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <string.h>
 # include <sys/time.h>
 # include <sys/wait.h>
-# include <signal.h>
-# include <string.h>
 # include <fcntl.h>
 # include <semaphore.h>
-# include <sys/stat.h>
+# include <signal.h>
 # include <pthread.h>
-# include <stdbool.h>
+# include <limits.h>
 
-/* セマフォ名 */
 # define SEM_FORKS "/philo_forks"
 # define SEM_PRINT "/philo_print"
-# define SEM_MEAL_CHECK "/philo_meal_check"
+# define SEM_FINISH "/philo_finish"
 
-/* メッセージ */
+# define TRUE 1
+# define FALSE 0
+
+/* Philosophers state messages */
 # define FORK_MSG "has taken a fork"
 # define EAT_MSG "is eating"
 # define SLEEP_MSG "is sleeping"
 # define THINK_MSG "is thinking"
 # define DIED_MSG "died"
 
-/* エラーコード */
-# define SUCCESS 0
-# define ERROR 1
-# define DEATH 2
+/* Error messages */
+# define ERR_ARGS "Error: Invalid number of arguments"
+# define ERR_NUM_RANGE "Error: Numbers must be positive and within range"
+# define ERR_SEM_OPEN "Error: Failed to open semaphore"
+# define ERR_SEM_UNLINK "Error: Failed to unlink semaphore"
+# define ERR_FORK "Error: Failed to fork process"
+# define ERR_THREAD "Error: Failed to create thread"
+# define ERR_MEMORY "Error: Memory allocation failed"
 
-typedef struct s_data
+/* Shared data structure for all philosophers */
+typedef struct s_shared
 {
-	int			philo_count;	/* 哲学者の数 */
-	int			time_to_die;	/* 死亡までの時間（ミリ秒） */
-	int			time_to_eat;	/* 食事時間（ミリ秒） */
-	int			time_to_sleep;	/* 睡眠時間（ミリ秒） */
-	int			must_eat_count;	/* 各哲学者が食べる必要のある回数（オプション） */
-	long long	start_time;		/* シミュレーション開始時間 */
-	pid_t		*pid_array;		/* 子プロセスPID配列 */
-	sem_t		*forks_sem;		/* フォークセマフォ */
-	sem_t		*print_sem;		/* 出力用セマフォ */
-	sem_t		*meal_check_sem;/* 食事カウント用セマフォ */
-}				t_data;
+	int				num_philos;
+	long long		time_to_die;
+	long long		time_to_eat;
+	long long		time_to_sleep;
+	int				must_eat_count;
+	long long		start_time;
+	sem_t			*forks_sem;
+	sem_t			*print_sem;
+	sem_t			*finish_sem;
+	pid_t			*pids;
+}	t_shared;
 
+/* Individual philosopher data structure */
 typedef struct s_philo
 {
-	int			id;				/* 哲学者ID (1から始まる) */
-	int			eat_count;		/* 食事回数 */
-	long long	last_meal_time;	/* 最後の食事時間 */
-	t_data		*data;			/* 共有データ */
-	pthread_t	monitor_thread;	/* 監視スレッド */
-}				t_philo;
+	int				id;
+	long long		last_meal_time;
+	int				eat_count;
+	t_shared		*shared;
+}	t_philo;
 
-/* 初期化関数 */
-int			init_data(t_data *data, int argc, char **argv);
-int			init_semaphores(t_data *data);
-void		init_philosopher(t_philo *philo, t_data *data, int id);
+/* Utility functions */
+int			ft_atoi(const char *str);
+long long	get_current_time(void);
+void		precise_sleep(long long ms);
+void		safe_print(t_philo *philo, char *message);
 
-/* プロセス関連関数 */
-int			create_philosophers(t_data *data);
-void		philosopher_process(t_data *data, int id);
-void		*death_monitor(void *arg);
-void		*meal_counter(void *arg);
+/* Initialization functions */
+int			parse_arguments(int argc, char **argv, t_shared *shared);
+int			init_semaphores(t_shared *shared);
+int			init_philosophers(t_shared *shared);
 
-/* 哲学者の行動関数 */
+/* Philosopher routine functions */
+void		philosopher_routine(t_philo *philo);
+void		*monitor_death(void *arg);
 void		take_forks(t_philo *philo);
 void		eat(t_philo *philo);
+void		release_forks(t_philo *philo);
 void		sleep_and_think(t_philo *philo);
 
-/* ユーティリティ関数 */
-int			ft_atoi(const char *str);
-long long	get_time(void);
-long long	time_diff(long long past, long long present);
-void		print_status(t_philo *philo, char *status, int is_dead);
-void		precise_sleep(long long duration);
-
-/* リソース管理関数 */
-void		cleanup_resources(t_data *data);
-void		close_semaphores(t_data *data);
-void		unlink_semaphores(void);
-void		kill_processes(t_data *data);
+/* Cleanup functions */
+void		cleanup_semaphores(t_shared *shared);
+void		kill_all_processes(t_shared *shared);
 
 #endif

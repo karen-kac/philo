@@ -6,121 +6,125 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:34:21 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 19:34:22 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/19 20:03:52 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../includes/philo_bonus.h"
 
-/* 引数の検証 */
-static int	validate_args(int argc, char **argv)
+
+
+/* Clean up all resources */
+static void	cleanup_all(t_shared *shared)
+{
+	cleanup_semaphores(shared);
+	if (shared->pids)
+		free(shared->pids);
+}
+
+/* Create processes for each philosopher */
+static int	create_philosophers(t_shared *shared)
 {
 	int	i;
-	int	j;
+	int	pid;
 
-	if (argc != 5 && argc != 6)
+	i = 0;
+	shared->start_time = get_current_time();
+	while (i < shared->num_philos)
 	{
-		printf("Error: wrong number of arguments\n");
-		printf("Usage: %s number_of_philosophers time_to_die time_to_eat ", argv[0]);
-		printf("time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
-		return (ERROR);
-	}
-	i = 1;
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j])
+		pid = fork();
+		if (pid < 0)
 		{
-			if (argv[i][j] < '0' || argv[i][j] > '9')
-			{
-				printf("Error: arguments must be positive numbers\n");
-				return (ERROR);
-			}
-			j++;
+			printf("%s\n", ERR_FORK);
+			kill_all_processes(shared);
+			return (FALSE);
+		}
+		else if (pid == 0)
+		{
+			// Child process (philosopher)
+			t_philo	philo;
+
+			philo.id = i;
+			philo.last_meal_time = shared->start_time;
+			philo.eat_count = 0;
+			philo.shared = shared;
+			philosopher_routine(&philo);
+			exit(0);
+		}
+		else
+		{
+			// Parent process
+			shared->pids[i] = pid;
 		}
 		i++;
 	}
-	return (SUCCESS);
+	return (TRUE);
 }
 
-/* 子プロセスの終了を監視する */
-static void	wait_for_processes(t_data *data)
+/* Wait for philosophers to finish or die */
+static void	wait_for_philosophers(t_shared *shared)
 {
+	int	i;
 	int	status;
-	int	exit_status;
-	pid_t pid;
+	int	dead_philo_found;
 
-	/* 非ブロッキングで最初に終了したプロセスを待機 */
-	pid = waitpid(-1, &status, 0);
-	if (pid > 0 && WIFEXITED(status))
+	dead_philo_found = FALSE;
+	for (i = 0; i < shared->num_philos; i++)
 	{
-		exit_status = WEXITSTATUS(status);
-		if (exit_status == DEATH)
+		waitpid(-1, &status, 0);
+		if (WIFEXITED(status))
 		{
-			/* 死亡を検出したら即座に全プロセスを終了 */
-			kill_processes(data);
-			
-			/* 残りのプロセスの終了を待機（終了状態は無視） */
-			while (waitpid(-1, NULL, 0) > 0)
-				;
-			return;
+			int exit_status = WEXITSTATUS(status);
+			if (exit_status == 1)
+			{
+				dead_philo_found = TRUE;
+				break;
+			}
 		}
 	}
-
-	/* 死亡でない通常終了の場合は全プロセスの終了を待機 */
-	while (waitpid(-1, &status, 0) > 0)
-		;
+	if (dead_philo_found)
+		kill_all_processes(shared);
 }
 
-/* meal_counter.c に移動 */
-
+/* Main function */
 int	main(int argc, char **argv)
 {
-	t_data		data;
-	pthread_t	meal_thread;
+	t_shared	shared;
 
-	/* 引数の検証 */
-	if (validate_args(argc, argv) != SUCCESS)
-		return (ERROR);
+	memset(&shared, 0, sizeof(t_shared));
+	shared.must_eat_count = -1;
+	
+	// Parse arguments and initialize resources
+	if (!parse_arguments(argc, argv, &shared))
+		return (1);
 
-	/* セマフォのアンリンク（前回実行の残りがあれば） */
-	unlink_semaphores();
-
-	/* データの初期化 */
-	if (init_data(&data, argc, argv) != SUCCESS)
-		return (ERROR);
-
-	/* セマフォの初期化 */
-	if (init_semaphores(&data) != SUCCESS)
+	// Allocate memory for process IDs
+	shared.pids = malloc(sizeof(pid_t) * shared.num_philos);
+	if (!shared.pids)
 	{
-		cleanup_resources(&data);
-		return (ERROR);
+		printf("%s\n", ERR_MEMORY);
+		return (1);
 	}
 
-	/* 食事回数監視スレッドの作成（オプション） */
-	if (data.must_eat_count > 0)
+	// Initialize semaphores
+	if (!init_semaphores(&shared))
 	{
-		if (pthread_create(&meal_thread, NULL, &meal_counter, &data) != 0)
-		{
-			printf("Error: failed to create meal counter thread\n");
-			cleanup_resources(&data);
-			return (ERROR);
-		}
-		pthread_detach(meal_thread);
+		free(shared.pids);
+		return (1);
 	}
 
-	/* 哲学者プロセスの作成 */
-	if (create_philosophers(&data) != SUCCESS)
+	// Create philosopher processes
+	if (!create_philosophers(&shared))
 	{
-		cleanup_resources(&data);
-		return (ERROR);
+		cleanup_all(&shared);
+		return (1);
 	}
 
-	/* 各プロセスの終了を待機 */
-	wait_for_processes(&data);
+	// Wait for philosophers to finish or die
+	wait_for_philosophers(&shared);
 
-	/* リソースのクリーンアップ */
-	cleanup_resources(&data);
-	return (SUCCESS);
+	// Clean up all resources
+	cleanup_all(&shared);
+	return (0);
 }

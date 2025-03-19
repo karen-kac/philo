@@ -3,36 +3,39 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+         #
+#    By: claude                                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/03/19 19:33:55 by myokono           #+#    #+#              #
-#    Updated: 2025/03/19 19:33:56 by myokono          ###   ########.fr        #
+#    Created: 2025/03/19                              #+#    #+#              #
+#    Updated: 2025/03/19                             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+NAME = philo_bonus
 
-NAME		= philo_bonus
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g
 
-CC			= gcc
-CFLAGS		= -Wall -Wextra -Werror
-RM			= rm -f
+SRCS = src/main_bonus.c src/utils_bonus.c src/philosopher_bonus.c
+OBJS = $(SRCS:.c=.o)
 
-SRCS		= src/main_bonus.c src/init_bonus.c src/philosopher_bonus.c src/utils_bonus.c src/meal_counter_bonus.c
-OBJS		= $(SRCS:.c=.o)
+HEADERS = philo_bonus.h
 
-all:		$(NAME)
+all: $(NAME)
 
-$(NAME):	$(OBJS)
-			$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-			$(RM) $(OBJS)
+	rm -f $(OBJS)
 
-fclean:		clean
-			$(RM) $(NAME)
+fclean: clean
+	rm -f $(NAME)
 
-re:			fclean all
+re: fclean all
 
-bonus:		all
+bonus: all
 
-.PHONY:		all clean fclean re bonus
+.PHONY: all clean fclean re bonus

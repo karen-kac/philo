@@ -6,15 +6,43 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:34:01 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 19:34:02 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/19 20:04:12 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../includes/philo_bonus.h"
 
-/* 現在時刻をミリ秒で取得 */
-long long	get_time(void)
+
+
+/* Custom atoi implementation */
+int	ft_atoi(const char *str)
+{
+	int	res;
+	int	sign;
+	int	i;
+
+	res = 0;
+	sign = 1;
+	i = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = res * 10 + (str[i] - '0');
+		i++;
+	}
+	return (res * sign);
+}
+
+/* Get current time in milliseconds */
+long long	get_current_time(void)
 {
 	struct timeval	tv;
 
@@ -22,97 +50,127 @@ long long	get_time(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-/* 2つの時刻の差分を計算 */
-long long	time_diff(long long past, long long present)
-{
-	return (present - past);
-}
-
-/* 状態メッセージの表示 */
-void	print_status(t_philo *philo, char *status, int is_dead)
-{
-	long long	current_time;
-
-	(void)is_dead;
-	/* 現在時刻を取得 */
-	current_time = get_time();
-	
-	/* セマフォを獲得（死亡時の処理はdeath_monitorに移動） */
-	sem_wait(philo->data->print_sem);
-	
-	/* 状態メッセージを表示 */
-	printf("%lld %d %s\n", 
-		time_diff(philo->data->start_time, current_time), 
-		philo->id, 
-		status);
-	
-	/* セマフォを解放 */
-	sem_post(philo->data->print_sem);
-}
-
-/* 正確な待機時間を実現するための関数 */
-void	precise_sleep(long long duration)
+/* Sleep with precision using usleep */
+void	precise_sleep(long long ms)
 {
 	long long	start_time;
-	long long	current_time;
 
-	start_time = get_time();
-	while (1)
+	start_time = get_current_time();
+	while ((get_current_time() - start_time) < ms)
+		usleep(500);
+}
+
+/* Print message with semaphore protection */
+void	safe_print(t_philo *philo, char *message)
+{
+	sem_wait(philo->shared->print_sem);
+	printf("%lld %d %s\n", 
+		get_current_time() - philo->shared->start_time, 
+		philo->id + 1, 
+		message);
+	if (message[0] != 'd')  // Don't release semaphore if it's a death message
+		sem_post(philo->shared->print_sem);
+}
+
+/* Parse command line arguments */
+int	parse_arguments(int argc, char **argv, t_shared *shared)
+{
+	if (argc < 5 || argc > 6)
 	{
-		current_time = get_time();
-		if (time_diff(start_time, current_time) >= duration)
-			break ;
-		usleep(100);  /* 短い間隔でチェックして精度を向上 */
+		printf("%s\n", ERR_ARGS);
+		return (FALSE);
+	}
+	
+	shared->num_philos = ft_atoi(argv[1]);
+	shared->time_to_die = ft_atoi(argv[2]);
+	shared->time_to_eat = ft_atoi(argv[3]);
+	shared->time_to_sleep = ft_atoi(argv[4]);
+	
+	if (argc == 6)
+		shared->must_eat_count = ft_atoi(argv[5]);
+	
+	if (shared->num_philos <= 0 || shared->time_to_die <= 0 ||
+		shared->time_to_eat <= 0 || shared->time_to_sleep <= 0 ||
+		(argc == 6 && shared->must_eat_count <= 0))
+	{
+		printf("%s\n", ERR_NUM_RANGE);
+		return (FALSE);
+	}
+	
+	return (TRUE);
+}
+
+/* Initialize semaphores */
+int	init_semaphores(t_shared *shared)
+{
+	// Unlink any existing semaphores with the same names
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_PRINT);
+	sem_unlink(SEM_FINISH);
+	
+	// Open semaphores
+	shared->forks_sem = sem_open(SEM_FORKS, O_CREAT, 0644, shared->num_philos);
+	if (shared->forks_sem == SEM_FAILED)
+	{
+		printf("%s: %s\n", ERR_SEM_OPEN, SEM_FORKS);
+		return (FALSE);
+	}
+	
+	shared->print_sem = sem_open(SEM_PRINT, O_CREAT, 0644, 1);
+	if (shared->print_sem == SEM_FAILED)
+	{
+		printf("%s: %s\n", ERR_SEM_OPEN, SEM_PRINT);
+		sem_close(shared->forks_sem);
+		sem_unlink(SEM_FORKS);
+		return (FALSE);
+	}
+	
+	shared->finish_sem = sem_open(SEM_FINISH, O_CREAT, 0644, 0);
+	if (shared->finish_sem == SEM_FAILED)
+	{
+		printf("%s: %s\n", ERR_SEM_OPEN, SEM_FINISH);
+		sem_close(shared->forks_sem);
+		sem_close(shared->print_sem);
+		sem_unlink(SEM_FORKS);
+		sem_unlink(SEM_PRINT);
+		return (FALSE);
+	}
+	
+	return (TRUE);
+}
+
+/* Clean up semaphores */
+void	cleanup_semaphores(t_shared *shared)
+{
+	if (shared->forks_sem != SEM_FAILED)
+	{
+		sem_close(shared->forks_sem);
+		sem_unlink(SEM_FORKS);
+	}
+	
+	if (shared->print_sem != SEM_FAILED)
+	{
+		sem_close(shared->print_sem);
+		sem_unlink(SEM_PRINT);
+	}
+	
+	if (shared->finish_sem != SEM_FAILED)
+	{
+		sem_close(shared->finish_sem);
+		sem_unlink(SEM_FINISH);
 	}
 }
 
-/* セマフォのアンリンク */
-void	unlink_semaphores(void)
-{
-	sem_unlink(SEM_FORKS);
-	sem_unlink(SEM_PRINT);
-	sem_unlink(SEM_MEAL_CHECK);
-}
-
-/* セマフォのクローズ */
-void	close_semaphores(t_data *data)
-{
-	if (data->forks_sem)
-		sem_close(data->forks_sem);
-	if (data->print_sem)
-		sem_close(data->print_sem);
-	if (data->meal_check_sem)
-		sem_close(data->meal_check_sem);
-}
-
-/* 全プロセスの強制終了 */
-void	kill_processes(t_data *data)
+/* Kill all philosopher processes */
+void	kill_all_processes(t_shared *shared)
 {
 	int	i;
 
 	i = 0;
-	while (i < data->philo_count)
+	while (i < shared->num_philos)
 	{
-		if (data->pid_array[i] > 0)
-		{
-			kill(data->pid_array[i], SIGKILL);  /* SIGTERMよりも確実に終了させるためSIGKILLを使用 */
-		}
+		if (shared->pids[i] > 0)
+			kill(shared->pids[i], SIGTERM);
 		i++;
 	}
-	/* プロセス終了を確実にするため短い待機 */
-	usleep(1000);
-}
-
-/* リソースの解放 */
-void	cleanup_resources(t_data *data)
-{
-	/* セマフォのクローズ */
-	close_semaphores(data);
-	
-	/* セマフォのアンリンク */
-	unlink_semaphores();
-	
-	/* メモリの解放 */
-	if (data->pid_array)
-		free(data->pid_array);
 }
