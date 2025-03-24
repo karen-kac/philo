@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:34:07 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 21:01:18 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/24 17:45:55 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ void	take_forks(t_philo *philo)
 
 void	eat(t_philo *philo)
 {
+	sem_wait(philo->shared->meal_check_sem);
 	philo->last_meal_time = get_current_time();
+	sem_post(philo->shared->meal_check_sem);
 	safe_print(philo, EAT_MSG);
 	precise_sleep(philo->shared->time_to_eat);
 	philo->eat_count++;

@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 20:55:47 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 20:55:57 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/24 17:47:33 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ void	cleanup_semaphores(t_shared *shared)
 		sem_close(shared->print_sem);
 		sem_unlink(SEM_PRINT);
 	}
-	if (shared->finish_sem != SEM_FAILED)
+	if (shared->meal_check_sem != SEM_FAILED)
 	{
-		sem_close(shared->finish_sem);
-		sem_unlink(SEM_FINISH);
+		sem_close(shared->meal_check_sem);
+		sem_unlink(SEM_MEAL_CHECK);
 	}
 }
 

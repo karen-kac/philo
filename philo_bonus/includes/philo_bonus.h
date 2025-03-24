@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:01:55 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 21:01:57 by myokono          ###   ########.fr       */
+/*   Updated: 2025/03/24 17:49:24 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 # define SEM_FORKS "/philo_forks"
 # define SEM_PRINT "/philo_print"
-# define SEM_FINISH "/philo_finish"
+# define SEM_MEAL_CHECK "/meal_check_sem"
 
 # define TRUE 1
 # define FALSE 0
@@ -59,7 +59,7 @@ typedef struct s_shared
 	long long		start_time;
 	sem_t			*forks_sem;
 	sem_t			*print_sem;
-	sem_t			*finish_sem;
+	sem_t			*meal_check_sem;
 	pid_t			*pids;
 }	t_shared;
 
