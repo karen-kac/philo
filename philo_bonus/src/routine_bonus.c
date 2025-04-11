@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:01:03 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 21:12:34 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/11 20:04:03 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ void	philosopher_routine(t_philo *philo)
 	start_monitor_thread(philo);
 	if (philo->shared->num_philos == 1)
 		handle_single_philo(philo);
-	if (philo->id % 2 == 0)
-		usleep(10000);
 	while (1)
 	{
 		take_forks(philo);
