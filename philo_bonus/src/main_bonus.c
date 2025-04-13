@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:34:21 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/19 21:12:59 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:03:07 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,10 @@ static int	create_philosophers(t_shared *shared)
 
 static void	wait_for_philosophers(t_shared *shared)
 {
-	int	i;
 	int	status;
 	int	dead_philo_found;
 	int	exit_status;
+	int	i;
 
 	dead_philo_found = FALSE;
 	i = 0;
@@ -93,20 +93,13 @@ int	main(int argc, char **argv)
 		return (1);
 	shared.pids = malloc(sizeof(pid_t) * shared.num_philos);
 	if (!shared.pids)
-	{
-		printf("%s\n", ERR_MEMORY);
-		return (1);
-	}
+		return (printf("%s\n", ERR_MEMORY), 1);
 	if (!init_semaphores(&shared))
-	{
-		free(shared.pids);
-		return (1);
-	}
+		return (free(shared.pids), 1);
+	if (shared.must_eat_count != -1 && !setup_meal_checker(&shared))
+		return (cleanup_all(&shared), 1);
 	if (!create_philosophers(&shared))
-	{
-		cleanup_all(&shared);
-		return (1);
-	}
+		return (cleanup_all(&shared), 1);
 	wait_for_philosophers(&shared);
 	cleanup_all(&shared);
 	return (0);

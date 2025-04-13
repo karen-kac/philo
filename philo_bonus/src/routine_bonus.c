@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:01:03 by myokono           #+#    #+#             */
-/*   Updated: 2025/04/11 20:04:03 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:07:01 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ void	philosopher_routine(t_philo *philo)
 		take_forks(philo);
 		eat(philo);
 		release_forks(philo);
-		if (philo->shared->must_eat_count != -1
+		if (philo->shared->must_eat_count != -1 \
 			&& philo->eat_count >= philo->shared->must_eat_count)
-			exit(0);
+			sem_post(philo->shared->meal_complete_sem);
 		sleep_and_think(philo);
 	}
 }

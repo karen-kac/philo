@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 20:58:54 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/24 17:48:05 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:09:46 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,21 @@ static int	init_single_sem(sem_t **sem, const char *name, int value)
 
 int	init_semaphores(t_shared *shared)
 {
+	shared->forks_sem = SEM_FAILED;
+	shared->print_sem = SEM_FAILED;
+	shared->meal_check_sem = SEM_FAILED;
+	shared->meal_complete_sem = SEM_FAILED;
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_PRINT);
 	sem_unlink(SEM_MEAL_CHECK);
+	sem_unlink(SEM_MEAL_COMPLETE);
 	if (!init_single_sem(&shared->forks_sem, SEM_FORKS, shared->num_philos))
 		return (FALSE);
 	if (!init_single_sem(&shared->print_sem, SEM_PRINT, 1))
-	{
-		sem_close(shared->forks_sem);
-		sem_unlink(SEM_FORKS);
-		return (FALSE);
-	}
+		return (cleanup_semaphores(shared), FALSE);
 	if (!init_single_sem(&shared->meal_check_sem, SEM_MEAL_CHECK, 1))
-	{
-		sem_close(shared->forks_sem);
-		sem_close(shared->print_sem);
-		sem_unlink(SEM_FORKS);
-		sem_unlink(SEM_PRINT);
-		return (FALSE);
-	}
+		return (cleanup_semaphores(shared), FALSE);
+	if (!init_single_sem(&shared->meal_complete_sem, SEM_MEAL_COMPLETE, 0))
+		return (cleanup_semaphores(shared), FALSE);
 	return (TRUE);
 }

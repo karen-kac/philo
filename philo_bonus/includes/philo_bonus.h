@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:01:55 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/24 17:49:24 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 11:55:03 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # define SEM_FORKS "/philo_forks"
 # define SEM_PRINT "/philo_print"
 # define SEM_MEAL_CHECK "/meal_check_sem"
+# define SEM_MEAL_COMPLETE "/meal_complete_sem"
 
 # define TRUE 1
 # define FALSE 0
@@ -60,6 +61,7 @@ typedef struct s_shared
 	sem_t			*forks_sem;
 	sem_t			*print_sem;
 	sem_t			*meal_check_sem;
+	sem_t			*meal_complete_sem;
 	pid_t			*pids;
 }	t_shared;
 
@@ -95,4 +97,7 @@ void		sleep_and_think(t_philo *philo);
 void		cleanup_semaphores(t_shared *shared);
 void		kill_all_processes(t_shared *shared);
 
+/* Meal check */
+void		*meal_checker_routine(void *arg);
+int			setup_meal_checker(t_shared *shared);
 #endif
