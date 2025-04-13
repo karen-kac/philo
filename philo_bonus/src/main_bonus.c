@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: myokono <myokono@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:34:21 by myokono           #+#    #+#             */
-/*   Updated: 2025/04/13 12:03:07 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:59:18 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ static int	create_philosophers(t_shared *shared)
 			shared->pids[i] = pid;
 		i++;
 	}
+	if (i == shared->num_philos)
+		sem_post(shared->init_complete_sem);
 	return (TRUE);
 }
 

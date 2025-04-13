@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: myokono <myokono@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 20:55:47 by myokono           #+#    #+#             */
-/*   Updated: 2025/04/13 12:04:01 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:58:27 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ void	cleanup_semaphores(t_shared *shared)
 	{
 		sem_close(shared->meal_complete_sem);
 		sem_unlink(SEM_MEAL_COMPLETE);
+	}
+	if (shared->init_complete_sem != SEM_FAILED)
+	{
+		sem_close(shared->init_complete_sem);
+		sem_unlink(SEM_INIT_COMPLETE);
 	}
 }
 

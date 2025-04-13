@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: myokono <myokono@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:01:55 by myokono           #+#    #+#             */
-/*   Updated: 2025/04/13 11:55:03 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:56:40 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # define SEM_PRINT "/philo_print"
 # define SEM_MEAL_CHECK "/meal_check_sem"
 # define SEM_MEAL_COMPLETE "/meal_complete_sem"
+# define SEM_INIT_COMPLETE "/init_complete_sem"
 
 # define TRUE 1
 # define FALSE 0
@@ -62,6 +63,7 @@ typedef struct s_shared
 	sem_t			*print_sem;
 	sem_t			*meal_check_sem;
 	sem_t			*meal_complete_sem;
+	sem_t			*init_complete_sem;
 	pid_t			*pids;
 }	t_shared;
 

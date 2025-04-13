@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   meal_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: myokono <myokono@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:53:33 by myokono           #+#    #+#             */
-/*   Updated: 2025/04/13 12:04:32 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/13 12:59:44 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	*meal_checker_routine(void *arg)
 	int			total_meals;
 
 	shared = (t_shared *)arg;
+	sem_wait(shared->init_complete_sem);
 	total_meals = 0;
 	while (total_meals < shared->num_philos)
 	{
