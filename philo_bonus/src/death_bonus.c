@@ -6,7 +6,7 @@
 /*   By: myokono <myokono@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 20:53:36 by myokono           #+#    #+#             */
-/*   Updated: 2025/03/24 17:48:44 by myokono          ###   ########.fr       */
+/*   Updated: 2025/04/11 20:07:59 by myokono          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	*monitor_death(void *arg)
 			safe_print(philo, DIED_MSG);
 			exit(1);
 		}
-		usleep(1000);
+		usleep(100);
 	}
 	return (NULL);
 }
